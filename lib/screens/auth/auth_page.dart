@@ -111,6 +111,8 @@ class _AuthPageState extends State<AuthPage> {
           SizedBox(
             width: MediaQuery.of(context).size.width / 6,
             child: TextField(
+              obscuringCharacter: '*',
+              obscureText: true,
               onChanged: (value) => _password = value,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -161,10 +163,12 @@ class _AuthPageState extends State<AuthPage> {
                         ? _authRepositoryImpl.login(
                             username: _email,
                             password: _password,
+                            rememberMe: _remeberMe,
                           )
                         : _authRepositoryImpl.createUser(
                             username: _email,
                             password: _password,
+                            rememberMe: _remeberMe,
                           );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

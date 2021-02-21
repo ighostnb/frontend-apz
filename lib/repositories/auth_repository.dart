@@ -1,20 +1,22 @@
 import 'dart:convert';
 
 import 'package:frontend_apz/constants/const.dart';
+import 'package:frontend_apz/database/database.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AuthRepository {
-  Future<void> createUser({String username, String password});
-  Future<void> login({String username, String password});
-  Future<void> deleteUser({String id, String token});
+  Future<bool> createUser({String username, String password, bool rememberMe});
+  Future<bool> login({String username, String password, bool rememberMe});
+  Future<bool> deleteUser({String id, String token});
 }
 
 class AuthRepositoryImpl extends AuthRepository {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
-  Future<void> createUser({String username, String password}) async {
+  Future<bool> createUser(
+      {String username, String password, bool rememberMe}) async {
     try {
       final _headers = {
         'Content-type': 'application/json',
@@ -32,15 +34,23 @@ class AuthRepositoryImpl extends AuthRepository {
       );
 
       if (_response.statusCode == 200) {
-        login(username: username, password: password);
+        login(
+          username: username,
+          password: password,
+          rememberMe: rememberMe,
+        );
+        return true;
       }
+
+      return false;
     } catch (__) {
       print(__.toString());
+      return false;
     }
   }
 
   @override
-  Future<void> deleteUser({String id, String token}) async {
+  Future<bool> deleteUser({String id, String token}) async {
     try {
       final _headers = {
         'Content-type': 'application/json',
@@ -53,14 +63,20 @@ class AuthRepositoryImpl extends AuthRepository {
         headers: _headers,
       );
 
-      if (_response.statusCode == 200) {}
+      if (_response.statusCode == 200) {
+        return true;
+      }
+
+      return false;
     } catch (__) {
       print(__.toString());
+      return false;
     }
   }
 
   @override
-  Future<void> login({String username, String password}) async {
+  Future<bool> login(
+      {String username, String password, bool rememberMe}) async {
     try {
       final SharedPreferences prefs = await _prefs;
       final _headers = {
@@ -80,11 +96,20 @@ class AuthRepositoryImpl extends AuthRepository {
 
       if (_response.statusCode == 200) {
         final data = jsonDecode(_response.body);
-        prefs.setString('id', data['id']);
-        prefs.setString('token', data['token']);
+        if (rememberMe) {
+          prefs.setString('id', data['id']);
+          prefs.setString('token', data['token']);
+        } else {
+          Database.id = data['id'];
+          Database.token = data['token'];
+        }
+        return true;
       }
+
+      return false;
     } catch (__) {
       print(__.toString());
+      return false;
     }
   }
 }
