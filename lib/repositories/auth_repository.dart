@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:frontend_apz/constants/const.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AuthRepository {
   Future<void> createUser({String username, String password});
@@ -10,6 +11,8 @@ abstract class AuthRepository {
 }
 
 class AuthRepositoryImpl extends AuthRepository {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   @override
   Future<void> createUser({String username, String password}) async {
     try {
@@ -28,7 +31,9 @@ class AuthRepositoryImpl extends AuthRepository {
         headers: _headers,
       );
 
-      if (_response.statusCode == 200) {}
+      if (_response.statusCode == 200) {
+        login(username: username, password: password);
+      }
     } catch (__) {
       print(__.toString());
     }
@@ -57,6 +62,7 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<void> login({String username, String password}) async {
     try {
+      final SharedPreferences prefs = await _prefs;
       final _headers = {
         'Content-type': 'application/json',
       };
@@ -72,7 +78,11 @@ class AuthRepositoryImpl extends AuthRepository {
         headers: _headers,
       );
 
-      if (_response.statusCode == 200) {}
+      if (_response.statusCode == 200) {
+        final data = jsonDecode(_response.body);
+        prefs.setString('id', data['id']);
+        prefs.setString('token', data['token']);
+      }
     } catch (__) {
       print(__.toString());
     }

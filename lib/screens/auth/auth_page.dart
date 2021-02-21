@@ -1,5 +1,7 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_apz/constants/helper.dart';
+import 'package:frontend_apz/repositories/auth_repository.dart';
 import 'package:frontend_apz/screens/auth/widgets/side_panel.dart';
 
 class AuthPage extends StatefulWidget {
@@ -8,9 +10,13 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
+  String _email = '';
+  String _password = '';
+  AuthRepositoryImpl _authRepositoryImpl = AuthRepositoryImpl();
+
   final Color _panelColor = Color(0xff3557DC);
   final Color _pageColor = Color(0xff2841A8);
-  bool remeberMe = false;
+  bool _remeberMe = false;
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +84,7 @@ class _AuthPageState extends State<AuthPage> {
           SizedBox(
             width: MediaQuery.of(context).size.width / 6,
             child: TextField(
+              onChanged: (value) => _email = value,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: BorderSide(width: 1),
@@ -104,9 +111,12 @@ class _AuthPageState extends State<AuthPage> {
           SizedBox(
             width: MediaQuery.of(context).size.width / 6,
             child: TextField(
+              onChanged: (value) => _password = value,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1),
+                  borderSide: BorderSide(
+                    width: 1,
+                  ),
                 ),
                 hintText: 'Enter your password',
               ),
@@ -122,26 +132,58 @@ class _AuthPageState extends State<AuthPage> {
             child: Row(
               children: [
                 Checkbox(
-                  value: remeberMe,
-                  onChanged: (value) => setState(() => remeberMe = !remeberMe),
+                  value: _remeberMe,
+                  onChanged: (value) => setState(
+                    () => _remeberMe = !_remeberMe,
+                  ),
                 ),
                 Text(
                   'Remeber Me',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 12.0),
+            padding: const EdgeInsets.only(
+              top: 12.0,
+            ),
             child: SizedBox(
               height: 50,
               width: MediaQuery.of(context).size.width / 5.9,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (EmailValidator.validate(_email) == true &&
+                      _password.length > 7) {
+                    Helper.isHaveAccount
+                        ? _authRepositoryImpl.login(
+                            username: _email,
+                            password: _password,
+                          )
+                        : _authRepositoryImpl.createUser(
+                            username: _email,
+                            password: _password,
+                          );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Padding(
+                          padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width / 2.3,
+                          ),
+                          child: Text('Enter correct email and password!'),
+                        ),
+                      ),
+                    );
+                  }
+                },
                 child: Text(
                   Helper.isHaveAccount ? 'LOG IN' : 'SIGN UP',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
@@ -175,17 +217,25 @@ class _AuthPageState extends State<AuthPage> {
             padding: const EdgeInsets.only(top: 20),
             child: TextButton(
               onPressed: () => setState(
-                () => Helper.isHaveAccount = !Helper.isHaveAccount,
+                () {
+                  Helper.isHaveAccount = !Helper.isHaveAccount;
+                  _remeberMe = false;
+                },
               ),
               child: Text(
                 Helper.isHaveAccount
                     ? '      SIGN UP       '
                     : '       LOG IN       ',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
               style: ButtonStyle(
                 side: MaterialStateProperty.all<BorderSide>(
-                  BorderSide(color: Colors.white, width: 1),
+                  BorderSide(
+                    color: Colors.white,
+                    width: 1,
+                  ),
                 ),
               ),
             ),

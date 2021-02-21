@@ -31,6 +31,8 @@ dependencies:
   http: ^0.12.2
   bloc: ^6.1.1
   flutter_bloc: ^6.1.2
+  shared_preferences: ^0.5.12+4
+  email_validator: ^1.0.6
 
 dev_dependencies:
   flutter_test:
@@ -63,10 +65,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: BetmRounded
+      fonts:
+        - asset: fonts/BetmRounded-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
