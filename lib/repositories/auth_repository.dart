@@ -6,8 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AuthRepository {
-  Future<bool> createUser({String username, String password, bool rememberMe});
-  Future<bool> login({String username, String password, bool rememberMe});
+  Future<bool> createUser({String email, String password, bool rememberMe});
+  Future<bool> login({String email, String password, bool rememberMe});
   Future<bool> deleteUser({String id, String token});
 }
 
@@ -16,14 +16,14 @@ class AuthRepositoryImpl extends AuthRepository {
 
   @override
   Future<bool> createUser(
-      {String username, String password, bool rememberMe}) async {
+      {String email, String password, bool rememberMe}) async {
     try {
       final _headers = {
         'Content-type': 'application/json',
       };
 
       final _body = jsonEncode({
-        'username': username,
+        'email': email,
         'password': password,
       });
 
@@ -33,12 +33,52 @@ class AuthRepositoryImpl extends AuthRepository {
         headers: _headers,
       );
 
+      print(_response.statusCode);
+
       if (_response.statusCode == 200) {
-        login(
-          username: username,
-          password: password,
-          rememberMe: rememberMe,
-        );
+        // login(
+        //   email: email,
+        //   password: password,
+        //   rememberMe: rememberMe,
+        // );
+        return true;
+      }
+
+      return false;
+    } catch (__) {
+      print(__.toString() + 'asda');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> login({String email, String password, bool rememberMe}) async {
+    try {
+      final SharedPreferences prefs = await _prefs;
+      final _headers = {
+        'Content-type': 'application/json',
+      };
+
+      final _body = jsonEncode({
+        'email': email,
+        'password': password,
+      });
+
+      final _response = await http.post(
+        Const.loginUrl,
+        body: _body,
+        headers: _headers,
+      );
+
+      if (_response.statusCode == 200) {
+        final data = jsonDecode(_response.body);
+        if (rememberMe) {
+          prefs.setString('id', data['id']);
+          prefs.setString('token', data['token']);
+        } else {
+          Database.id = data['id'];
+          Database.token = data['token'];
+        }
         return true;
       }
 
@@ -63,48 +103,7 @@ class AuthRepositoryImpl extends AuthRepository {
         headers: _headers,
       );
 
-      if (_response.statusCode == 200) {
-        return true;
-      }
-
-      return false;
-    } catch (__) {
-      print(__.toString());
-      return false;
-    }
-  }
-
-  @override
-  Future<bool> login(
-      {String username, String password, bool rememberMe}) async {
-    try {
-      final SharedPreferences prefs = await _prefs;
-      final _headers = {
-        'Content-type': 'application/json',
-      };
-
-      final _body = jsonEncode({
-        'username': username,
-        'password': password,
-      });
-
-      final _response = await http.post(
-        Const.loginUrl,
-        body: _body,
-        headers: _headers,
-      );
-
-      if (_response.statusCode == 200) {
-        final data = jsonDecode(_response.body);
-        if (rememberMe) {
-          prefs.setString('id', data['id']);
-          prefs.setString('token', data['token']);
-        } else {
-          Database.id = data['id'];
-          Database.token = data['token'];
-        }
-        return true;
-      }
+      if (_response.statusCode == 200) return true;
 
       return false;
     } catch (__) {

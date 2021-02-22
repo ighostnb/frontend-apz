@@ -156,20 +156,24 @@ class _AuthPageState extends State<AuthPage> {
               height: 50,
               width: MediaQuery.of(context).size.width / 5.9,
               child: TextButton(
-                onPressed: () {
+                onPressed: () async {
                   if (EmailValidator.validate(_email) == true &&
                       _password.length > 7) {
                     Helper.isHaveAccount
-                        ? _authRepositoryImpl.login(
-                            username: _email,
+                        ? await _authRepositoryImpl.login(
+                            email: _email,
                             password: _password,
                             rememberMe: _remeberMe,
                           )
-                        : _authRepositoryImpl.createUser(
-                            username: _email,
+                            ? Navigator.pushReplacementNamed(context, '/home')
+                            : _resException()
+                        : await _authRepositoryImpl.createUser(
+                            email: _email,
                             password: _password,
                             rememberMe: _remeberMe,
-                          );
+                          )
+                            ? Navigator.pushReplacementNamed(context, '/home')
+                            : _resException();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -198,6 +202,14 @@ class _AuthPageState extends State<AuthPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _resException() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Something went wrong!'),
       ),
     );
   }
