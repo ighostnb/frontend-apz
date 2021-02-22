@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend_apz/screens/auth/auth_page.dart';
 import 'package:frontend_apz/screens/home/home_page.dart';
 
+import 'utils/auth_check.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -11,9 +13,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'BetmRounded',
       ),
-      initialRoute: '/',
+      initialRoute: '/auth',
       routes: {
         '/': (context) => AuthPage(),
+        '/auth': (context) => AuthCheck(),
         '/home': (context) => HomePage(),
       },
     );
