@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:frontend_apz/constants/const.dart';
+import 'package:frontend_apz/constants/url.dart';
 import 'package:frontend_apz/database/database.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,19 +28,17 @@ class AuthRepositoryImpl extends AuthRepository {
       });
 
       final _response = await http.post(
-        Const.registerUrl,
+        Url.registerUrl,
         body: _body,
         headers: _headers,
       );
 
-      print(_response.statusCode);
-
       if (_response.statusCode == 200) {
-        // login(
-        //   email: email,
-        //   password: password,
-        //   rememberMe: rememberMe,
-        // );
+        login(
+          email: email,
+          password: password,
+          rememberMe: rememberMe,
+        );
         return true;
       }
 
@@ -65,7 +63,7 @@ class AuthRepositoryImpl extends AuthRepository {
       });
 
       final _response = await http.post(
-        Const.loginUrl,
+        Url.loginUrl,
         body: _body,
         headers: _headers,
       );
@@ -99,7 +97,7 @@ class AuthRepositoryImpl extends AuthRepository {
       };
 
       final _response = await http.delete(
-        Const.deleteUserUrl,
+        Url.deleteUserUrl,
         headers: _headers,
       );
 
