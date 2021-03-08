@@ -4,6 +4,7 @@ import 'package:frontend_apz/blocs/device/device_cubit.dart';
 import 'package:frontend_apz/repositories/device_repository.dart';
 import 'package:frontend_apz/screens/auth/auth_page.dart';
 import 'package:frontend_apz/screens/home/home_page.dart';
+import 'package:frontend_apz/screens/menu-panel/menu_panel.dart';
 
 import 'utils/auth_check.dart';
 
@@ -22,11 +23,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'BetmRounded',
         ),
-        initialRoute: '/auth',
+        initialRoute: '/home',
         routes: {
           '/': (context) => AuthPage(),
           '/auth': (context) => AuthCheck(),
-          '/home': (context) => HomePage(),
+          '/home': (context) => MenuPanel(),
         },
       ),
     );
