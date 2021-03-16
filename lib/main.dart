@@ -23,10 +23,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'BetmRounded',
         ),
-        initialRoute: '/home',
+        initialRoute: '/',
         routes: {
-          '/': (context) => AuthPage(),
-          '/auth': (context) => AuthCheck(),
+          '/': (context) => AuthCheck(),
+          '/auth': (context) => AuthPage(),
           '/home': (context) => MenuPanel(),
         },
       ),

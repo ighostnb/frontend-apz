@@ -7,7 +7,10 @@ class DevicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DeviceCubit, DeviceState>(
       builder: (context, state) {
+        final DeviceCubit _deviceCubit = BlocProvider.of<DeviceCubit>(context);
+
         if (state is DeviceEmptyState) {
+          _deviceCubit.fetchUserDevices();
           return Center(
             child: CircularProgressIndicator(),
           );
@@ -22,7 +25,10 @@ class DevicePage extends StatelessWidget {
         if (state is DeviceLoadedState) {
           if (state.deviceList == null || state.deviceList.isEmpty) {
             return Center(
-              child: Text('Devices are empty'),
+              child: Text(
+                'Devices are empty',
+                style: TextStyle(fontSize: 25),
+              ),
             );
           }
 

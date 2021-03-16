@@ -160,6 +160,9 @@ class DeviceRepositoryImpl extends DeviceRepository {
         headers: _headers,
       );
 
+      print(_response.statusCode);
+      print(_response.body);
+
       if (_response.statusCode == 200) {
         var data = jsonDecode(_response.body);
 

@@ -23,7 +23,7 @@ class _MenuPanelState extends State<MenuPanel> {
 
   final double _iconSize = 45;
 
-  final Color _activeColor = Color(0xff3557DC);
+  final Color _activeColor = Colors.white;
   final Color _inactiveColor = Colors.grey;
 
   final PageStorageBucket _pageStorageBucket = PageStorageBucket();
@@ -36,17 +36,23 @@ class _MenuPanelState extends State<MenuPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: PageStorage(
-        bucket: _pageStorageBucket,
-        child: _currentScreen,
-      ),
-      drawer: Container(
-        child: Padding(
-          padding: EdgeInsets.only(
-            right: MediaQuery.of(context).size.width / 1.03,
+      body: Row(
+        children: [
+          Container(
+            width: 75,
+            height: MediaQuery.of(context).size.height,
+            child: SingleChildScrollView(child: _menu()),
+            color: Color(0xff12202F),
           ),
-          child: SingleChildScrollView(child: _menu()),
-        ),
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width - 75,
+            child: PageStorage(
+              bucket: _pageStorageBucket,
+              child: _currentScreen,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -54,16 +60,19 @@ class _MenuPanelState extends State<MenuPanel> {
   Widget _menu() {
     return Column(
       children: [
-        GestureDetector(
-          child: Icon(
-            Icons.home,
-            color: _selectedItem == 0 ? _activeColor : _inactiveColor,
-            size: _iconSize,
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: GestureDetector(
+            child: Icon(
+              Icons.home,
+              color: _selectedItem == 0 ? _activeColor : _inactiveColor,
+              size: _iconSize,
+            ),
+            onTap: () => setState(() {
+              _currentScreen = _screensList[0];
+              _selectedItem = 0;
+            }),
           ),
-          onTap: () => setState(() {
-            _currentScreen = _screensList[0];
-            _selectedItem = 0;
-          }),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 30, bottom: 30),

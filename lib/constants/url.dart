@@ -6,5 +6,6 @@ class Url {
   static const String deleteDevice = '';
   static const String changeDeviceParams = '';
   static const String getUserDevices = '';
-  static const String getDeviceInfo = '';
+  static const String getDeviceInfo =
+      'http://localhost:3000/api/device/get-user-devices';
 }
